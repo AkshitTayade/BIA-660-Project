@@ -1,0 +1,3 @@
+Steps:
+1. Web Scraping (website)
+2. .txt file creation
