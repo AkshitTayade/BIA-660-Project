@@ -1,3 +1,23 @@
+#!/usr/bin/python
+
+import sys
+import os
+import numpy as np
+import pandas as pd
+# import classifier.py as C
+
+# this should be the filename to some saved TFIDF document
+filepath = sys.argv[1]
+topN = int(sys.argv[2])
+# f = open(filepath)
+df = pd.read_csv(filepath)
+tfidf = df["xdata"].to_numpy()
+# labels = df["ydata"].to_numpy()
+prepro = np.argsort(tfidf, axis=1)[:,:topN]
+# f.close()
+os.system("python classifier.py")
+# gc = GenreClassifier()
+'''
 import numpy as np
 
 clusters = [[] for i in range(3)]
@@ -12,24 +32,12 @@ print("centers")
 print(centers)
 
 t = np.concatenate(tuple([xdata]*3), axis=1)
-# print("cat t over 0 reshaped")
 t=t.reshape((18,2))
-# print(t.T)
 c = np.concatenate(tuple([centers]*6))
-# print("cat c over 1")
-# print(c.T)
-# print("distances")
-# print(((t-c)**2).T)
-# print("summed")
 d = np.sum((t-c)**2,axis=1).T
-# print(d)
-# print("reshaped")
 d = d.reshape((6,3))
-# print(d)
 
 print(np.argmin(d,axis=1))
-# for i in np.argmin(d,axis=1):
-#     print(i,end=' ')
 print("\n")
 print('find')
 for doc,cluster in enumerate(np.argmin(d,axis=1)):
@@ -43,3 +51,4 @@ for cluster in clusters:
     print(cluster)
 print('.')
 print(np.mean(clusters, axis=0))
+'''

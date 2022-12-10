@@ -22,10 +22,6 @@ class GenreClassifier:
         self.K, self.D = K, D
         self.centers = [np.random.randint(0,self.V, size=(K,D))]
     
-    def KNN(self):
-        #
-        return
-    
     # Assume the dimensions represent the top 50 words
     # each point represents a document
     # their values for each dim range from 0-V exclusive
@@ -51,14 +47,12 @@ class GenreClassifier:
         self.centers = newcenters
         return self.KMeans(iter+1)
 
-    # creates a new Nx(A+B+1) matrix from xdata containing the vocab indices of certain words
-    # A is the number of highest tfidf scores
-    # B is the number of lowest tfidf scores
-    # the median is also added
-    def subset(self, A=40, B=10):
-        return
-
-    def distance(self):
-        #
-        return
-    
+    def classify(self, testing):
+        if testing.shape[1]!=self.D:
+            print(f"Error: tesing shape{testing.shape} Must have Dimensionality of {self.D} for top M words")
+            return None
+        distances = []
+        t = np.concatenate(tuple([testing]*self.K), axis=1).reshape((testing.shape[0]*self.K,self.D))
+        c = np.concatenate(tuple([self.centers]*testing.shape[0]))
+        dist = np.sum((t-c)**2,axis=1)
+        return np.argmin(dist.reshape(self.K,testing.shape[0],testing.shape[1]),axis=0)
