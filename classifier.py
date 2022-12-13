@@ -25,11 +25,11 @@ class GenreClassifier:
     # Assume the dimensions represent the top 50 words
     # each point represents a document
     # their values for each dim range from 0-V exclusive
-    def KMeans(self, iter=0):
+    def KMeans(self, iterr=0):
         clusters = [[] for i in range(self.K)]
-        newclusters = []
         newcenters = []
 
+        print(iterr)
         #assume centers are KxD and xdata is NxD
         t = np.concatenate(tuple([self.xdata]*self.K), axis=1).reshape((self.N*self.K,self.D))
         c = np.concatenate(tuple([self.centers]*self.N))
@@ -45,7 +45,7 @@ class GenreClassifier:
         if (self.centers == newcenters).all():
             return self.centers
         self.centers = newcenters
-        return self.KMeans(iter+1)
+        return self.KMeans(iterr+1)
 
     def classify(self, testing):
         if testing.shape[1]!=self.D:

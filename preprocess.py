@@ -9,46 +9,15 @@ import pandas as pd
 # this should be the filename to some saved TFIDF document
 filepath = sys.argv[1]
 topN = int(sys.argv[2])
-# f = open(filepath)
+f = open(filepath)
 df = pd.read_csv(filepath)
-tfidf = df["xdata"].to_numpy()
-# labels = df["ydata"].to_numpy()
+tfidf = df.to_numpy()
+pf = pd.read_csv("./project.csv", header=False)
+labels = df2.to_numpy()
 prepro = np.argsort(tfidf, axis=1)[:,:topN]
-# f.close()
+f.close()
 os.system("python classifier.py")
-# gc = GenreClassifier()
-'''
-import numpy as np
-
-clusters = [[] for i in range(3)]
-print(clusters)
-
-xdata = np.random.randint(1,50,size=(6,2))
-centers = np.random.randint(1,50,size=(3,2))
-
-print("xdata")
-print(xdata)
-print("centers")
-print(centers)
-
-t = np.concatenate(tuple([xdata]*3), axis=1)
-t=t.reshape((18,2))
-c = np.concatenate(tuple([centers]*6))
-d = np.sum((t-c)**2,axis=1).T
-d = d.reshape((6,3))
-
-print(np.argmin(d,axis=1))
-print("\n")
-print('find')
-for doc,cluster in enumerate(np.argmin(d,axis=1)):
-    print(cluster)
-    print(doc)
-    print(xdata[doc])
-    clusters[cluster].append(xdata[doc])
-print('find')
-clusters = np.array(clusters)
-for cluster in clusters:
-    print(cluster)
-print('.')
-print(np.mean(clusters, axis=0))
-'''
+voc = ['youdidntincludethevocab']*prepro.shape[1]
+gc = GenreClassifier(prepro,None,voc,labels,14,50)
+answer = np.array(gc.KMeans())
+np.save_txt("./output.txt",answer)
