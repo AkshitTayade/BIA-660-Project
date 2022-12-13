@@ -109,11 +109,5 @@ def compute_tfidf(docs):
 
 
 tf_idf_novel = compute_tfidf(novel_data)
-
-
-
 df = pd.DataFrame(tf_idf_novel)
-
-
-
 df.to_csv('./giantNP.csv', header=False)
