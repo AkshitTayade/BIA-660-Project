@@ -18,6 +18,6 @@ prepro = np.argsort(tfidf, axis=1)[:,:topN]
 f.close()
 os.system("python classifier.py")
 voc = ['youdidntincludethevocab']*prepro.shape[1]
-gc = GenreClassifier(prepro,None,voc,labels,14,50)
+gc = GenreClassifier(prepro,None,voc,labels,14,topN)
 answer = np.array(gc.KMeans())
 np.save_txt("./output.txt",answer)
