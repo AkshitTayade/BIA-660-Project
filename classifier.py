@@ -15,35 +15,39 @@ class GenreClassifier:
         self.ydata = ydata
         # V-len dict - mapping the positions in the matrix to every unique word
         self.vocab = vocab
-        self.V, self.N = xdata.shape
+        self.N, self.V = xdata.shape
         # N-len dict - mapping the positions in the matrix to the book's title
         self.books = books
         # number of classes
         self.K, self.D = K, D
-        self.centers = [np.random.randint(0,self.V, size=(K,D))]
+        self.centers = np.random.randint(0,self.V, size=(K,D))
     
     # Assume the dimensions represent the top 50 words
     # each point represents a document
     # their values for each dim range from 0-V exclusive
     def KMeans(self, iterr=0):
         clusters = [[] for i in range(self.K)]
-        newcenters = []
+        newcenters = np.zeros(self.centers.shape)
 
         print(iterr)
+    #     print('center.shape'+str(self.centers.shape))
+    #     print(self.centers)
         #assume centers are KxD and xdata is NxD
         t = np.concatenate(tuple([self.xdata]*self.K), axis=1).reshape((self.N*self.K,self.D))
-        c = np.concatenate(tuple([self.centers]*self.N))
+        c = np.concatenate(tuple([self.centers]*self.N), axis=0).reshape((self.N*self.K,self.D))
         dist = np.sum((t-c)**2,axis=1)
-
-        dist.reshape(self.N,self.K)
-
+        dist = dist.reshape(self.N,self.K)
+        
         for doc,cluster in enumerate(np.argmin(dist,axis=1)):
-            clusters[cluster].append(self.xdata[doc,:])
-        clusters = np.array(clusters)
-        newcenters = np.mean(np.array(clusters),axis=0)
-
+            clusters[cluster].append(self.xdata[doc])
+        
+        for n,cluster in enumerate(clusters):
+            if len(cluster) == 0:
+                newcenters[n]=self.centers[n]
+            else:
+                newcenters[n]=np.mean(np.asarray(cluster),axis=0)
         if (self.centers == newcenters).all():
-            return self.centers
+            return clusters
         self.centers = newcenters
         return self.KMeans(iterr+1)
 
