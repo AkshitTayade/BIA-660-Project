@@ -15,7 +15,7 @@ class GenreClassifier:
         self.ydata = ydata
         # V-len dict - mapping the positions in the matrix to every unique word
         self.vocab = vocab
-        self.V, self.N = xdata.shape
+        self.N, self.V = xdata.shape
         # N-len dict - mapping the positions in the matrix to the book's title
         self.books = books
         # number of classes
