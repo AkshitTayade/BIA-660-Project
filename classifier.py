@@ -15,41 +15,46 @@ class GenreClassifier:
         self.ydata = ydata
         # V-len dict - mapping the positions in the matrix to every unique word
         self.vocab = vocab
-        self.N, self.V = xdata.shape
+        self.N, self.D = xdata.shape
         # N-len dict - mapping the positions in the matrix to the book's title
         self.books = books
         # number of classes
-        self.K, self.D = K, D
-        self.centers = np.random.randint(0,self.V, size=(K,D))
+        self.K, self.V = K, len(vocab)
+        self.centers = np.concatenate(tuple([col for col in np.random.randint(min(xdata[:,0]),max(xdata[:,0]), size=(K,1))]),axis=1)#np.random.randint(0,self.V, size=(K,D))
+        print(self.centers.shape)
+        
     
-    # Assume the dimensions represent the top 50 words
+    # Assume the dimensions represent the top D words
     # each point represents a document
     # their values for each dim range from 0-V exclusive
     def KMeans(self, iterr=0):
+        newcenters,t,c,dist,clusters = None,None,None,None,None
+        while(True):
             clusters = [[] for i in range(self.K)]
-    newcenters = np.zeros(self.centers.shape)
+            newcenters = np.zeros(self.centers.shape)
 
-    print(iterr)
-#     print('center.shape'+str(self.centers.shape))
-#     print(self.centers)
-    #assume centers are KxD and xdata is NxD
-    t = np.concatenate(tuple([self.xdata]*self.K), axis=1).reshape((self.N*self.K,self.D))
-    c = np.concatenate(tuple([self.centers]*self.N), axis=0).reshape((self.N*self.K,self.D))
-    dist = np.sum((t-c)**2,axis=1)
-    dist = dist.reshape(self.N,self.K)
-    
-    for doc,cluster in enumerate(np.argmin(dist,axis=1)):
-        clusters[cluster].append(self.xdata[doc])
-    
-    for n,cluster in enumerate(clusters):
-        if len(cluster) == 0:
-            newcenters[n]=self.centers[n]
-        else:
-            newcenters[n]=np.mean(np.asarray(cluster),axis=0)
-    if (self.centers == newcenters).all():
-        return clusters
-    self.centers = newcenters
-    return self.KMeans(iterr+1)
+            print(iterr)
+            #assume centers are KxD and xdata is NxD
+            t = np.concatenate(tuple([self.xdata]*self.K), axis=1).reshape((self.N*self.K,self.D))
+            c = np.concatenate(tuple([self.centers]*self.N), axis=0).reshape((self.N*self.K,self.D))
+            dist = np.sum((t-c)**2,axis=1)
+            dist = dist.reshape(self.N,self.K)
+
+            for doc,cluster in enumerate(np.argmin(dist,axis=1)):
+                clusters[cluster].append(self.xdata[doc])
+
+            for n,cluster in enumerate(clusters):
+                if len(cluster) == 0:
+                    newcenters[n]=self.centers[n]#np.random.randint(0,self.V, size=(1,self.D))#
+                else:
+                    newcenters[n]=np.mean(np.asarray(cluster),axis=0)
+            if (self.centers == newcenters).all():
+                return clusters
+            self.centers = newcenters
+            # return self.KMeans(iterr+1)
+            iterr += 1
+            if iterr>5000:
+                return clusters
 
     def classify(self, testing):
         if testing.shape[1]!=self.D:
