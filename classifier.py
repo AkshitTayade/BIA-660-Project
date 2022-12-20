@@ -20,7 +20,7 @@ class GenreClassifier:
         self.books = books
         # number of classes
         self.K, self.V = K, len(vocab)
-        self.centers = np.concatenate(tuple([col for col in np.random.randint(min(xdata[:,0]),max(xdata[:,0]), size=(K,1))]),axis=1)#np.random.randint(0,self.V, size=(K,D))
+        self.centers = np.concatenate(tuple([np.random.randint(min(xdata[:,col]),max(xdata[:,col]), size=(K,1)) for col in range(xdata.shape[1])]),axis=1)#np.random.randint(0,self.V, size=(K,D))
         print(self.centers.shape)
         
     
